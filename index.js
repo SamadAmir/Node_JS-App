@@ -12,7 +12,7 @@ app.listen(process.env.PORT,()=>{
 })
 
 //Importing routes
-
+//To add the Product
 app.post('/api/products',async (req,res)=>{
   try {
    const product =  await Product.create(req.body)
@@ -23,6 +23,7 @@ app.post('/api/products',async (req,res)=>{
   }
 }) 
 
+//To Find the product
 app.get("/api/products",async (req,res)=>{
   try {
     const products = await Product.find({})
@@ -32,6 +33,7 @@ app.get("/api/products",async (req,res)=>{
   }
 })
 
+//To find by ID
 app.get("/api/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -42,6 +44,37 @@ app.get("/api/product/:id", async (req, res) => {
   }
 });
 
+//Update the Product
+app.put("/api/product/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const product = await Product.findByIdAndUpdate(id, req.body, { new: true });
+    
+    if (!product) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+    res.status(200).json(product);
+    
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Delete the Product
+app.delete("/api/product/:id",async(req,res)=>{
+  try {
+    const {id} = req.params
+    const product = await Product.findByIdAndDelete(id)
+    if(!product){
+      res.status(404).json({message:"Product is not found"})
+    }
+    res.status(200).json({message:"Product is deleted successfully!"})
+  } catch (error) {
+    res.status(500).json({message:error.message})
+  }
+
+})
 
 app.get("/",(req,res)=>{
     res.send("<h1>Hello from Node API Server </h1>")
